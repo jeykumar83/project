@@ -39,9 +39,7 @@ var app = {
 
     onButtonClick: function() {
         let options = {
-            quality: 80,
-            targetWidth: 300,
-            targetHeight: 400
+            quality: 100,            
         };
 
         if (navigator.camera)
@@ -49,23 +47,43 @@ var app = {
         else
             console.log("camera is not available");
 
-        // navigator.camera.getPicture(app.onSuccess, app.onFailure, options);
+        navigator.camera.getPicture(app.onSuccess, app.onFailure, options);
 
         console.log("clicked!");
+        
+        //let photo_element = document.getElementById("photo");
+        // photo_element.src = "img/img_text.png"
+    },
 
-        if (Tesseract)
-            console.log("Tesseract is available")
-        else
-            console.log("Tesseract is not available")
+    extractText: function(imgPath) {
+        Tesseract.recognize(imgPath)
+        .progress(app.updateProgress)
+        .then(app.onResult);
+    },
 
-        let photo_element = document.getElementById("photo");
-        photo_element.src = "img/img_text.png"
+    updateProgress: function(value) {
+        let progress = document.getElementById("progress");
+        let progress_value = document.getElementById("progress_value");
 
-        Tesseract.recognize("img/img_text.png").then(app.onResult);
+        if (value.status === "recognizing text") {
+            progress_value.textContent = value.progress * 100;
 
+            progress.setAttribute("style", "display:block");
+            progress_value.setAttribute("style", "display:block");
+
+            console.log(value.progress);            
+        }
     },
 
     onResult: function(result) {
+        let text_element = document.getElementById("text");
+        let text_value = document.getElementById("text_value");
+
+        text_value.textContent = result.text;
+
+        text_element.setAttribute("style", "display:block");
+        text_value.setAttribute("style", "display:block");
+
         console.log(result.text);
         console.log("Tesseract finished!");
     },
@@ -76,7 +94,10 @@ var app = {
         if (photo_element == null)
             console.log("photo element is null");
 
-        photo_element.src = imgURI
+        photo_element.src = imgURI;
+        photo_element.width = 200;
+        
+        app.extractText(imgURI);
     },
 
     onFailure: function(msg) {
