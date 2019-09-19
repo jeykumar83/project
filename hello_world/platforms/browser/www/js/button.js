@@ -19,40 +19,30 @@
 var app = {
     // Application Constructor
     initialize: function() {        
-        document.addEventListener('deviceready', this.onDeviceReady, false);
+        //document.addEventListener('deviceready', this.onDeviceReady, false);
+        $(document).ready(this.onDeviceReady)
         console.log("initliaze");
     },
     // deviceready Event Handler
     //
     // The scope of 'this' is the event. In order to call the 'receivedEvent'
     // function, we must explicitly call 'app.receivedEvent(...);'
-    onDeviceReady: function() {       
-        var button_element = document.getElementById("button");
-        
-        if (button_element != null)
-            button_element.addEventListener('click', app.onButtonClick); 
-        
-        
+    onDeviceReady: function() {    
+        $("#my_button").click(app.onButtonClick);       
 
         console.log("onDevice ready");
     },
 
-    onButtonClick: function() {
-        let options = {
+    onButtonClick: function() {    
+        let camera_options = {
             quality: 100,            
         };
 
-        if (navigator.camera)
-            console.log("camera is available");
-        else
-            console.log("camera is not available");
+        navigator.camera.getPicture(app.onSuccess, app.onFailure, camera_options);
 
-        navigator.camera.getPicture(app.onSuccess, app.onFailure, options);
+        $("#my_button").hide();
 
-        console.log("clicked!");
-        
-        //let photo_element = document.getElementById("photo");
-        // photo_element.src = "img/img_text.png"
+        console.log("clicked!"); 
     },
 
     extractText: function(imgPath) {
@@ -61,59 +51,37 @@ var app = {
         .then(app.onResult);
     },
 
-    updateProgress: function(value) {
-        let progress = document.getElementById("progress");
-        let progress_value = document.getElementById("progress_value");
-
-        if (value.status === "recognizing text") {
-            progress_value.textContent = value.progress * 100;
-
-            progress.setAttribute("style", "display:block");
-            progress_value.setAttribute("style", "display:block");
+    updateProgress: function(value) {   
+        if (value.status === "recognizing text") {            
+            $("#my_progress_bar").css("width", value.progress * 100 + "%");            
+            $("#my_progress_bar").text(value.progress.toFixed(2) * 100 + "%");            
+            $("#my_progress").css("display", "flex");
 
             console.log(value.progress);            
         }
     },
 
     onResult: function(result) {
-        let text_element = document.getElementById("text");
-        let text_value = document.getElementById("text_value");
+        $("#my_progress").css("display", "none");
 
-        text_value.textContent = result.text;
-
-        text_element.setAttribute("style", "display:block");
-        text_value.setAttribute("style", "display:block");
+        $("#my_card_body").text(result.text);
+        $("#my_card").css("display", "flex")       
 
         console.log(result.text);
         console.log("Tesseract finished!");
     },
 
-    onSuccess: function(imgURI) {
-        let photo_element = document.getElementById("photo");
+    onSuccess: function(imgURI) {        
+        $("#my_photo").attr("src", imgURI);
+        $("#my_photo").css("display", "block");
 
-        if (photo_element == null)
-            console.log("photo element is null");
+        console.log("onPhoto Success!");
 
-        photo_element.src = imgURI;
-        photo_element.width = 200;
-        
-        app.extractText(imgURI);
+        app.extractText("img/img_text.png");
     },
 
     onFailure: function(msg) {
         console.log("Camera getpicture failed with the error ${msg}");
     }
-
-    // Update DOM on a Received Event
-    // receivedEvent: function(id) {
-    //     var parentElement = document.getElementById(id);
-    //     var listeningElement = parentElement.querySelector('.listening');
-    //     var receivedElement = parentElement.querySelector('.received');
-
-    //     listeningElement.setAttribute('style', 'display:none;');
-    //     receivedElement.setAttribute('style', 'display:block;');
-
-    //     console.log('Received Event: ' + id);
-    // }
 };
 
