@@ -41,6 +41,7 @@ var app = {
         navigator.camera.getPicture(app.onSuccess, app.onFailure, camera_options);
 
         $("#my_button").hide();
+        $('#my_button_div').hide();
 
         console.log("clicked!"); 
     },
@@ -77,7 +78,7 @@ var app = {
 
         console.log("onPhoto Success!");
 
-        app.extractText("img/img_text.png");
+        app.extractText(imgURI);
     },
 
     onFailure: function(msg) {
