@@ -45,3 +45,39 @@
     margin-right: auto;
     margin-top: 50px;
 }
+
+@media (min-width: 576px) {
+    .modal-xsm {
+      max-width: 100px;
+    }
+  }
+
+.my_button {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+#input_form {
+    padding: 20px;
+}
+
+.inner-addon {
+    position: relative;
+  }
+  
+  /* style glyph */
+  .inner-addon .fa {
+    position: absolute;
+    padding: 10px;
+    /* pointer-events: none; */
+  }
+  
+  /* align glyph */
+  .left-addon .fa  { left:  0px;}
+  .right-addon .fa { right: 0px;}
+  
+  /* add padding  */
+  .left-addon input  { padding-left:  30px; }
+  .right-addon input { padding-right: 30px; }
+  
+  
